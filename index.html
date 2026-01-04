@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can I Bunk?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #8b5cf6;
+            --secondary: #3b82f6;
+            --safe: #10b981;
+            --danger: #ef4444;
+            --text: #ffffff;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- BLOOM BACKGROUND ANIMATION --- */
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: moveBlob 20s infinite alternate;
+        }
+
+        .blob-1 {
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+        }
+
+        .blob-2 {
+            background: var(--secondary);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes moveBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.1); }
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(0,0,0,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+        }
+
+        /* --- COMPONENTS --- */
+        .container {
+            width: 100%;
+            max-width: 400px;
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #c084fc, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        /* Glass Card Style */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px); /* Stronger blur for glass effect */
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #7c3aed, #4f46e5);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px var(--primary);
+        }
+
+        /* --- DASHBOARD STYLES --- */
+        #dashboard { display: none; width: 100%; max-width: 600px; z-index: 10; }
+
+        .slider-container {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: fadeInUp 0.5s ease-out 0.2s backwards;
+            border: 1px solid var(--glass-border);
+        }
+
+        input[type=range] {
+            width: 60%;
+            height: 6px;
+            background: #475569;
+            border-radius: 5px;
+            outline: none;
+            padding: 0;
+            margin: 0;
+            border: none;
+            cursor: pointer;
+        }
+
+        .subject-card {
+            margin-bottom: 15px;
+            position: relative;
+            transition: 0.3s;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+        
+        .subject-card:nth-child(1) { animation-delay: 0.1s; }
+        .subject-card:nth-child(2) { animation-delay: 0.2s; }
+        .subject-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .subject-name { font-weight: 500; font-size: 1.1rem; }
+        .subject-pct { font-weight: 700; font-size: 1.2rem; }
+
+        .progress-track {
+            background: rgba(255,255,255,0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%; 
+        }
+
+        .status-msg {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .status-safe { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .status-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        /* Loader */
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #fff;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            display: none;
+            margin: 20px auto;
+        }
+
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div id="login-screen" class="container">
+        <h1>Can I Bunk?</h1>
+        <p class="subtitle">Enter the matrix. Check your fate.</p>
+        
+        <div class="glass-card">
+            <label style="font-size: 0.8rem; color: #cbd5e1; margin-left: 5px;">Roll Number</label>
+            <input type="text" id="rollno" placeholder="e.g. 25X059">
+            
+            <label style="font-size: 0.8rem; color: #cbd5e1; margin-left: 5px;">Password</label>
+            <input type="password" id="password" placeholder="••••••••">
+            
+            <button class="btn-main" onclick="startLogin()" id="loginBtn">
+                Login
+            </button>
+            <div class="loader" id="loader"></div>
+            <p id="error-msg" style="color: var(--danger); text-align: center; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <div id="dashboard">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin:0;">My Status</h2>
+            <button onclick="location.reload()" style="background:none; border:none; color: #94a3b8; cursor:pointer;">Logout</button>
+        </div>
+
+        <div class="slider-container">
+            <span style="font-size: 0.9rem;">Target Goal: <strong id="targetVal" style="color:var(--primary);">75%</strong></span>
+            <input type="range" id="targetSlider" min="50" max="95" value="75" oninput="recalculate()">
+        </div>
+
+        <div id="cards-container">
+            </div>
+    </div>
+
+    <script>
+        let globalData = [];
+
+        async function startLogin() {
+            const roll = document.getElementById('rollno').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            const loader = document.getElementById('loader');
+            const errorMsg = document.getElementById('error-msg');
+
+            if(!roll || !pass) {
+                // Shake animation
+                btn.style.animation = "pulse 0.5s";
+                setTimeout(() => btn.style.animation = "", 500);
+                return; 
+            }
+
+            btn.style.display = "none";
+            loader.style.display = "block";
+            errorMsg.innerText = "";
+
+            try {
+                // --- CONNECT TO BACKEND ---
+                const API_URL = "http://127.0.0.1:5000/"; 
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roll_no: roll, password: pass })
+                });
+
+                if(!response.ok) throw new Error("Login failed. Check credentials.");
+
+                globalData = await response.json();
+                
+                // Transition
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                recalculate(); 
+
+            } catch (err) {
+                btn.style.display = "block";
+                loader.style.display = "none";
+                errorMsg.innerText = err.message;
+            }
+        }
+
+        function recalculate() {
+            const target = parseInt(document.getElementById('targetSlider').value);
+            document.getElementById('targetVal').innerText = target + "%";
+            
+            const container = document.getElementById('cards-container');
+            container.innerHTML = ""; 
+
+            globalData.forEach((sub, index) => {
+                let total = parseInt(sub['Total'] || sub.total_hours || sub.total || 0);
+                let attended = parseInt(sub['Attended'] || sub.attended_hours || sub.attended || 0);
+                let name = sub['Course Name'] || sub.course_name || sub.subject || "Unknown Subject";
+                
+                let currentPct = 0;
+                if(total > 0) currentPct = (attended / total) * 100;
+                
+                let isSafe = currentPct >= target;
+                let message = "";
+                let colorVar = isSafe ? "var(--safe)" : "var(--danger)";
+
+                if (isSafe) {
+                    let potentialTotal = attended / (target / 100);
+                    let bunkable = Math.floor(potentialTotal - total);
+                    message = `Safe! You can bunk <strong>${bunkable}</strong> classes.`;
+                } else {
+                    let needed = Math.ceil(((target/100 * total) - attended) / (1 - (target/100)));
+                    if(needed < 0) needed = 0;
+                    message = `Warning! Attend <strong>${needed}</strong> more classes.`;
+                }
+
+                const card = document.createElement('div');
+                card.className = "glass-card subject-card";
+                card.style.animationDelay = `${index * 0.1}s`; 
+                
+                card.innerHTML = `
+                    <div class="subject-header">
+                        <span class="subject-name">${name}</span>
+                        <span class="subject-pct" style="color:${colorVar}">${currentPct.toFixed(1)}%</span>
+                    </div>
+                    
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 0%; background-color: ${colorVar}"></div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <span style="font-size: 0.85rem; color: #cbd5e1;">${attended}/${total} Attended</span>
+                        <div class="status-msg ${isSafe ? 'status-safe' : 'status-danger'}">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+
+                setTimeout(() => {
+                    const bar = card.querySelector('.progress-fill');
+                    bar.style.width = `${Math.min(currentPct, 100)}%`;
+                }, 100 + (index * 50));
+            });
+        }
+    </script>
+</body>
+</html>
